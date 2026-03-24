@@ -5,10 +5,11 @@
 ## Reporting
 
 ### Soal 1
+**Argo Ngawi Jesgeges**
 
 #### Penjelasan
 
-Langkah pertama adalah memasukkan data penumpang ke dalam file passenger.csv yang sudah dibuat sebelumnya. 
+Langkah pertama adalah memasukkan data penumpang ke dalam file `passenger.csv` yang sudah dibuat sebelumnya. 
 ```bash
 $ wget -O passenger.csv "https://docs.google.com/spreadsheets/d/1NHmyS6wRO7To7ta-NLOOLHkPS6valvNaX7tawsv1zfE/export?format=csv&gid=0"
 ```
@@ -32,7 +33,7 @@ ARGV[2] = "" # Agar tidak dianggap file
 
 **Opsi a: Total Penumpang Kereta**
 
-Untuk menghitung total penumpang di kereta, menjumlahkan semua baris di dalam file *passenger.csv*
+Untuk menghitung total penumpang di kereta, menjumlahkan semua baris di dalam file `passenger.csv`
 ```bash
 NR > 1 {           # Tidak menghitung header
 if (opsi == "a")
@@ -100,5 +101,74 @@ print "Jumlah penumpang business class ada", count, "orang"}
 **Opsi selain a, b, c, d, dan e**
 <img width="900" height="78" alt="image" src="https://github.com/user-attachments/assets/e4f9a9dc-d513-4b69-bb71-6af07c342e07" />
 
-**Beberapa Isi File passenger.csv**
+**Beberapa Isi File `passenger.csv`**
 <img width="905" height="774" alt="image" src="https://github.com/user-attachments/assets/6c35908f-fe31-400a-8f18-4fde573013e9" />
+
+### Soal 2
+**Ekspedisi Pesugihan Gunung Kawi**
+
+#### Penjelasan
+
+**1. Langkah pertama: Mencari file yang dibutuhkan.**
+
+a. Download File Gdrive `peta-ekspedisi-amba.pdf` dan simpan ke folder `ekspedisi`
+```bash
+$ gdown -O ekspedisi/peta-ekspedisi-amba.pdf https://drive.google.com/uc?id=1q10pHSC3KFfvEiCN3V6PTroPR7YGHF6Q
+```
+
+b. Masuk ke folder `ekspedisi` dan membuka file `peta-ekspedisi-amba.pdf` secara concatonate
+```bash
+$ cd ekspedisi
+$ cat peta-ekspedisi-amba.pdf
+```
+
+c. Install tautan di dalam file `peta-ekspedisi-amba.pdf` paling bawah dengan menggunakan Git
+```bash
+$ git clone https://github.com/pocongcyber77/peta-gunung-kawi.git
+```
+Maka, di dalam file peta-gunung-kawi terdapat sebuah file `gsxtrack.json`
+<img width="903" height="72" alt="image" src="https://github.com/user-attachments/assets/4baed59c-f7eb-4a93-ac7e-36fa47550a4e" />
+
+**2. Mencari Titik Lokasi**
+
+a. Membuat shell script dengan nama file `parserkoordinat.sh`
+
+- Setelah masuk ke dalam file `peta-gunung-kawi`, kemudian membuat file `parserkoordinat.sh` untuk tempat shell script dan `titik-penting.txt` untuk tempat menyimpan hasilnya nanti.
+```bash
+$ mkdir parserkoordinat.sh
+$ mkdir titik-penting.txt
+```
+
+- Membuat shell script untuk mengambil data `id`, `site_name`, `latitude`, dan `longitude` dari file `gsxtrack.json`.
+```awk
+awk -F'[:,]'   # Untuk mengambil data pada kolom yang dipisahkan dengan ":" dan ","
+'/"id"/ {id=$2}    # Menjalankan perintah yang barisnya berisi "id" dan menyimpan kolom ke-2 ($2) ke variabel id 
+/"site_name"/ {site_name=$2}
+/"latitude"/ {latitude=$2}
+/"longitude"/ {longitude=$2; print id "," site_name ","  latitude "," longitude}  # Membuat output yang dipisahkan dengan tanda koma
+' gsxtrack.json | sed 's/[ "]*//g' >> titik-penting.txt # Diambil dari file gsxtrack.json
+```
+
+- Membuat program Shellscript `nemupusaka.sh` untuk menghitung titik tengah. Hasilnya dimasukkan ke file `posisipusaka.txt`
+```bash
+$ mkdir nemupusaka.sh
+$ mkdir posisipusaka.txt
+```
+
+- Mencari titik pusat dari 4 titik yang sudah didapat dengan menggunakan rumus titik tengah persegi
+Cara mencari titik pusatnya adalah dengan menggunakan `awk`, kolom ke-3 dari setiap baris dijumlahkan dan dimasukkan ke variabel `latitude`, begitu pula dengan `longitude` yang berada di kolom ke-4. Kemudian, barisnya dihitung menggunakan `count++`.
+```awk
+awk -F',' 'NR<=4 {latitude+=$3; longitude+=$4; count++}
+```
+Kemudian, outputnya adalah variabel `latitude` dan `longitude` dibagi dengan jumlah baris (count). 
+```awk
+END {print latitude/count "," longitude/count}' titik-penting.txt |
+```
+Untuk membacanya, isi yang dipisahkan oleh koma dimasukkan ke variabel `long` dan `lat` dan akan menghasilkan titik koordinat pusat. Hasilnya nanti dimasukkan ke file `posisipusaka.txt`.
+```bash
+while IFS=',' read long lat; do
+echo "Koordinat pusat:
+($long, $lat)" >> posisipusaka.txt
+done
+```
+Hasilnya adalah sebagai berikut.
