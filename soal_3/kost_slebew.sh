@@ -1,4 +1,20 @@
+
 #!/bin/bash
+
+checkNama() {
+local tambahNama="$1"
+local cekNama
+
+while IFS="|" read -r cekNama kamar sewa masuk status
+do
+if [[ "$cekNama" == "$tambahNama" ]]
+then
+echo "Nama sudah ada! Silakan buat nama lain."
+return 1
+fi
+done < "/home/ubuntu/SISOP-1-2026-IT-035/soal_3/data/penghuni.csv"
+return 0
+}
 
 checkKamar() {
 local tambahKamar="$1"
@@ -156,7 +172,15 @@ case "$opsi" in
 echo "================================================"
 echo "              TAMBAH PENGHUNI                   "
 echo "================================================"
+
+while true
+do
 read -p "Masukkan nama: " nama
+if checkNama "$nama"
+then
+break
+fi
+done
 
 while true
 do
@@ -277,24 +301,20 @@ read -p "Tekan [Enter] untuk kembali ke menu."
 ;;
 
 5)
-echo ""
-echo "========================================================="
-echo "              LAPORAN KEUANGAN KOST SLEBEW               "
-echo "========================================================="
-
 total_aktif=$(awk -F"|" '$5=="Aktif" {sum += $3} END {print sum+0}' data/penghuni.csv)
 total_nunggak=$(awk -F"|" '$5=="Menunggak" {sum += $3} END {print sum+0}' data/penghuni.csv)
 count=$(awk 'END {print NR}' data/penghuni.csv)
-echo "============ LAPORAN BULANAN KOST SLEBEW ============
- Total pemasukan (Aktif) : $total_aktif
- Total tunggakan         : $total_nunggak
- Jumlah penghuni         : $count
-=====================================================" >> rekap/laporan_bulanan.txt
+
+laporan=$(
+echo "========================================================="
+echo "              LAPORAN KEUANGAN KOST SLEBEW               "
+echo "========================================================="
 printf " Total pemasukan (Aktif) : %d\n" "$total_aktif"
 printf " Total tunggakan         : %d\n" "$total_nunggak"
 printf " Jumlah penghuni         : %d\n" "$count"
 echo  "---------------------------------------------------------"
 printf " Daftar penghuni menunggak: \n"
+printf "--------------------------------------------------------"
 awk -F"|" '
 BEGIN {
 ada=0
@@ -318,6 +338,10 @@ printf "=======================================================\n"
 printf "--------------------------------------------------------\n"
 }
 }' data/penghuni.csv
+)
+
+echo "$laporan"
+echo "$laporan" > rekap/laporan_bulanan.txt
 echo ""
 echo "[✔] Laporan berhasil disimpan ke rekap/laporan_bulanan.txt"
 echo ""
