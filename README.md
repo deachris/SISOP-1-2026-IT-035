@@ -674,7 +674,7 @@ Menu 5: Cetak Laporan Keuangan
 <img width="963" height="427" alt="image" src="https://github.com/user-attachments/assets/83c097e7-d3a6-4639-874d-1e66b7fa4013" />
 
 Isi File `rekap/laporan_bulanan.txt`
-<img width="902" height="164" alt="image" src="https://github.com/user-attachments/assets/f178f748-9bf8-4e2b-9610-1c5b72d33188" />
+<img width="653" height="239" alt="image" src="https://github.com/user-attachments/assets/827edbc1-2de6-4391-9eb9-033272c79499" />
 
 Menu 6: Kelola Cron (Pengingat Tagihan)
 - Tampilan Menu Kelola Cron
@@ -689,7 +689,7 @@ Menu 6: Kelola Cron (Pengingat Tagihan)
 Ketika cron job ditambah lagi, cron job yang lama sudah otomatis terhapus.
 <img width="782" height="160" alt="image" src="https://github.com/user-attachments/assets/12df5071-68c4-4379-be65-c0e45b0b9a45" />
 
-Isi File 'log/tagihan.log`
+Isi File `log/tagihan.log`
 <img width="919" height="51" alt="image" src="https://github.com/user-attachments/assets/bca1f523-40a0-4e6a-8c29-2c92e9fbebe5" />
 
 - Menu 3 Cron Job: Hapus Cron Job Pengingat
