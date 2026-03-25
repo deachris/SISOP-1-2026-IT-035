@@ -217,6 +217,23 @@ read opsi
 **Menu 1: Tambah Penghuni Baru**
 Untuk membuat menu tambah penghuni, diperlukan beberapa fungsi untuk memeriksa kesesuaian input dari user.
 
+- Untuk memeriksa apakah nama yang diinput sudah ada/sama.
+```bash
+checkNama() {
+local tambahNama="$1"
+local cekNama
+
+while IFS="|" read -r cekNama kamar sewa masuk status
+do
+if [[ "$cekNama" == "$tambahNama" ]]
+then
+echo "Nama sudah ada! Silakan buat nama lain."
+return 1
+fi
+done < "/home/ubuntu/SISOP-1-2026-IT-035/soal_3/data/penghuni.csv"
+return 0
+}
+```
 - Untuk memeriksa apakah nomor kamar yang diinput sudah terisi oleh penghuni lain atau belum.
 ```bash
 checkKamar() {
@@ -295,7 +312,15 @@ case "$opsi" in
 echo "================================================"
 echo "              TAMBAH PENGHUNI                   "
 echo "================================================"
+
+while true
+do
 read -p "Masukkan nama: " nama
+if checkNama "$nama"
+then
+break
+fi
+done
 
 while true
 do
@@ -444,14 +469,16 @@ read -p "Tekan [Enter] untuk kembali ke menu."
 Untuk membuat laporan keuangan, diperlukan variabel untuk menghitung jumlah total status yang aktif dan menunggak, yaitu dengan menjumlahkan kolom yang berisi kata "Aktif" atau "Menunggak". Laporan bulanan ini dimasukkan ke dalam file `laporan_bulanan.txt`. Laporan ini juga mencakup daftar siapa saja penghuni yang statusnya menunggak.
 ```bash
 5)
+total_aktif=$(awk -F"|" '$5=="Aktif" {sum += $3} END {print sum+0}' data/penghuni.csv)
+total_nunggak=$(awk -F"|" '$5=="Menunggak" {sum += $3} END {print sum+0}' data/penghuni.csv)
+count=$(awk 'END {print NR}' data/penghuni.csv)
+
+laporan=$(
 echo ""
 echo "========================================================="
 echo "              LAPORAN KEUANGAN KOST SLEBEW               "
 echo "========================================================="
 
-total_aktif=$(awk -F"|" '$5=="Aktif" {sum += $3} END {print sum+0}' data/penghuni.csv)
-total_nunggak=$(awk -F"|" '$5=="Menunggak" {sum += $3} END {print sum+0}' data/penghuni.csv)
-count=$(awk 'END {print NR}' data/penghuni.csv)
 echo "============ LAPORAN BULANAN KOST SLEBEW ============
  Total pemasukan (Aktif) : $total_aktif
  Total tunggakan         : $total_nunggak
@@ -462,6 +489,7 @@ printf " Total tunggakan         : %d\n" "$total_nunggak"
 printf " Jumlah penghuni         : %d\n" "$count"
 echo  "---------------------------------------------------------"
 printf " Daftar penghuni menunggak: \n"
+printf "--------------------------------------------------------"
 awk -F"|" '
 BEGIN {
 ada=0
@@ -485,6 +513,10 @@ printf "=======================================================\n"
 printf "--------------------------------------------------------\n"
 }
 }' data/penghuni.csv
+)
+
+echo "$laporan"
+echo "$laporan" > rekap/laporan_bulanan.txt
 echo ""
 echo "[✔] Laporan berhasil disimpan ke rekap/laporan_bulanan.txt"
 echo ""
