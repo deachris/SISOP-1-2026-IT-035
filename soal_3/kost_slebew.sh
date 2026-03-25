@@ -52,7 +52,6 @@ return 0
 }
 
 checkTagihan() {
-echo ""
 while IFS="|" read -r nama kamar sewa masuk status
 do
 if [ "$status" = "Menunggak" ]
@@ -87,7 +86,7 @@ read -p "Tekan [Enter] untuk kembali ke Menu Kelola Cron."
 "2")
 read -p "Masukkan jam (00-23): " jam
 read -p "Masukkan menit (00-59): " menit
-(crontab -l 2>/dev/null; echo "$menit $jam * * * /home/ubuntu/SISOP-1-2026-IT-035/soal_3/kost_slebew.sh --check-tagihan >> /home/ubuntu/SISOP-1-2026-IT-035/soal_3/log/tagihan.log") | crontab -
+echo "$menit $jam * * * /home/ubuntu/SISOP-1-2026-IT-035/soal_3/kost_slebew.sh --check-tagihan >> /home/ubuntu/SISOP-1-2026-IT-035/soal_3/log/tagihan.log" | crontab -
 echo ""
 echo "[✔] Cron job berhasil ditambahkan pada pukul $jam:$menit!"
 echo ""
@@ -255,11 +254,12 @@ echo "========================================================="
 echo "                  UPDATE STATUS TAGIHAN                  "
 echo "========================================================="
 read -p "Masukkan nama penghuni: " nama
-read -p "Masukkan status baru (Aktif/Menunggak): " status
 
-if [[ "$status" != "Aktif" && "$status" != "Menunggak" ]]; then
-echo "Status tidak valid!"
-else
+while true
+do
+read -p "Masukkan status baru (Aktif/Menunggak): " status
+if checkStatus
+then
 awk -F"|" -v nama="$nama" -v status_baru="$status" '
 BEGIN { OFS="|" }
 
@@ -269,7 +269,9 @@ $1 == nama { $5 = status_baru }
 ' data/penghuni.csv > tmp && mv tmp data/penghuni.csv
 echo ""
 echo "[✔] Status $nama berhasil diubah menjadi: $status."
+break
 fi
+done
 echo ""
 read -p "Tekan [Enter] untuk kembali ke menu."
 ;;

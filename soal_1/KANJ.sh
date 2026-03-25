@@ -2,7 +2,7 @@ BEGIN {
 FS = ","
 opsi = ARGV[2]
 
-if (opsi != "a" && opsi != "b" && opsi != "c" && opsi != "d" && opsi != "e") { 
+if (opsi != "a" && opsi != "b" && opsi != "c" && opsi != "d" && opsi != "e") {
 print "Soal tidak dikenali. Gunakan a, b, c, d, atau e."
 exit
 }
@@ -25,13 +25,13 @@ if ($3 == "Business") {count++}
 
 END {
 if (opsi == "a")
-{print "Jumlah seluruh penumpang KANJ adalah", count, "orang"}
+{print "Jumlah seluruh penumpang KANJ adalah", count, "orang."}
 else if (opsi == "b")
 {print "Jumlah gerbong penumpang KANJ adalah", length(a)}
 else if (opsi == "c")
 {print nama, "adalah penumpang kereta tertua dengan usia", max}
 else if (opsi == "d")
-{print "Rata-rata usia penumpang adalah", int(jumlah/count+0.5), "tahun"}
+{print "Rata-rata usia penumpang adalah", int(jumlah/count+0.5), "tahun."}
 else if (opsi == "e")
-{print "Jumlah penumpang business class ada", count, "orang"}
+{print "Jumlah penumpang business class ada", count, "orang."}
 }
